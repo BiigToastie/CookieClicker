@@ -5,6 +5,7 @@ import de.zillolp.cookieclicker.enums.Prices;
 import de.zillolp.cookieclicker.profiles.PlayerProfile;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerShopBuyEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
@@ -41,7 +42,7 @@ public class PlayerShopBuyEvent extends Event {
         return premiumPrices;
     }
 
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 

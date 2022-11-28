@@ -6,8 +6,8 @@ import de.zillolp.cookieclicker.config.LanguageTools;
 import de.zillolp.cookieclicker.manager.SoundManager;
 import de.zillolp.cookieclicker.profiles.InventoryProfile;
 import de.zillolp.cookieclicker.profiles.PlayerProfile;
-import de.zillolp.cookieclicker.utils.ActionBarUtil;
 import de.zillolp.cookieclicker.utils.InventorySetter;
+import de.zillolp.cookieclicker.xclasses.ActionBar;
 import de.zillolp.cookieclicker.xclasses.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -60,19 +60,19 @@ public class ClickerListener implements Listener {
             return;
         }
         if (playerProfile.getLastMove() + ConfigTools.getAfkCoolDown() < System.currentTimeMillis()) {
-            new ActionBarUtil(player, LanguageTools.getLanguage("AFK_MESSAGE")).sendActionbar();
+            ActionBar.sendActionBar(player, LanguageTools.getLanguage("AFK_MESSAGE"));
             soundManager.playSound(XSound.BLOCK_ANVIL_BREAK);
             return;
         }
         playerProfile.addCPS(1);
         if (playerProfile.isOverCPS()) {
-            new ActionBarUtil(player, LanguageTools.getLanguage("MAX_CPS")).sendActionbar();
+            ActionBar.sendActionBar(player, LanguageTools.getLanguage("MAX_CPS"));
             soundManager.playSound(XSound.BLOCK_ANVIL_BREAK);
             return;
         }
         playerProfile.addClickerClicks(1);
         playerProfile.addCookies(playerProfile.getPerClick());
-        new ActionBarUtil(player, LanguageTools.getLanguageReplaced("CLICK_MESSAGE", "%cookies%", playerProfile.getCookies())).sendActionbar();
+        ActionBar.sendActionBar(player, LanguageTools.getLanguageReplaced("CLICK_MESSAGE", "%cookies%", playerProfile.getCookies()));
         soundManager.playSound(XSound.ENTITY_ITEM_PICKUP);
     }
 
@@ -92,19 +92,19 @@ public class ClickerListener implements Listener {
         }
         SoundManager soundManager = playerProfile.getSoundManager();
         if (playerProfile.getLastMove() + ConfigTools.getAfkCoolDown() < System.currentTimeMillis()) {
-            new ActionBarUtil(player, LanguageTools.getLanguage("AFK_MESSAGE")).sendActionbar();
+            ActionBar.sendActionBar(player, LanguageTools.getLanguage("AFK_MESSAGE"));
             soundManager.playSound(XSound.BLOCK_ANVIL_BREAK);
             return;
         }
         playerProfile.addCPS(1);
         if (playerProfile.isOverCPS()) {
-            new ActionBarUtil(player, LanguageTools.getLanguage("MAX_CPS")).sendActionbar();
+            ActionBar.sendActionBar(player, LanguageTools.getLanguage("MAX_CPS"));
             soundManager.playSound(XSound.BLOCK_ANVIL_BREAK);
             return;
         }
         playerProfile.addClickerClicks(1);
         playerProfile.addCookies(playerProfile.getPerClick());
-        new ActionBarUtil(player, LanguageTools.getLanguageReplaced("CLICK_MESSAGE", "%cookies%", playerProfile.getCookies())).sendActionbar();
+        ActionBar.sendActionBar(player, LanguageTools.getLanguageReplaced("CLICK_MESSAGE", "%cookies%", playerProfile.getCookies()));
         soundManager.playSound(XSound.ENTITY_ITEM_PICKUP);
     }
 }

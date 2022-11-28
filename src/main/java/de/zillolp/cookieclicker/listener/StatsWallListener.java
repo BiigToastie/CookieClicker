@@ -76,12 +76,8 @@ public class StatsWallListener implements Listener {
         }
         locationTools.resetLocation();
         switch (type) {
-            case "AllTime":
-                cookieClicker.getAlltimeUpdater().reload();
-                break;
-            case "Time":
-                cookieClicker.getTimeUpdater().reload();
-                break;
+            case "AllTime" -> cookieClicker.getAlltimeUpdater().reload();
+            case "Time" -> cookieClicker.getTimeUpdater().reload();
         }
         player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Du hast den Rang §6" + rank + " §7entfernt.");
     }

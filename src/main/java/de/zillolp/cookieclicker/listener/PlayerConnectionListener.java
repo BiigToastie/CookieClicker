@@ -24,9 +24,9 @@ public class PlayerConnectionListener implements Listener {
         if (!(player.hasPermission(PermissionTools.getAdminPermission())) || UpdateChecker.isNewest()) {
             return;
         }
-        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§cYou are using an outdated version!");
-        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Latest version: §e" + UpdateChecker.version + "§7. You are on version: §e" + UpdateChecker.currentVersion + "§7.");
-        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Update here: §ehttps://www.spigotmc.org/resources/cookieclicker.65485/");
+        player.sendMessage(LanguageTools.getPrefix() + "§cYou are using an outdated version!");
+        player.sendMessage(LanguageTools.getPrefix() + "§7Latest version: §e" + UpdateChecker.version + "§7. You are on version: §e" + UpdateChecker.currentVersion + "§7.");
+        player.sendMessage(LanguageTools.getPrefix() + "§7Update here: §ehttps://www.spigotmc.org/resources/cookieclicker.65485/");
     }
 
     @EventHandler

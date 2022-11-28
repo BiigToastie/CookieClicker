@@ -17,7 +17,7 @@ public class ConfigUtil {
         this.yamlConfiguration = YamlConfiguration.loadConfiguration(file);
     }
 
-    public boolean exist() {
+    public boolean exists() {
         return file.exists();
     }
 
@@ -57,8 +57,8 @@ public class ConfigUtil {
     private void save() {
         try {
             yamlConfiguration.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 }

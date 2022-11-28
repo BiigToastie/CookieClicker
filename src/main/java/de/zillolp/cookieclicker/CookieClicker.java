@@ -4,22 +4,24 @@ import de.zillolp.cookieclicker.bstats.Metrics;
 import de.zillolp.cookieclicker.commands.CookieClickerCommand;
 import de.zillolp.cookieclicker.config.*;
 import de.zillolp.cookieclicker.database.DatabaseConnector;
-import de.zillolp.cookieclicker.database.DatabaseManager;
 import de.zillolp.cookieclicker.listener.*;
+import de.zillolp.cookieclicker.manager.DatabaseManager;
 import de.zillolp.cookieclicker.placeholder.Expansion;
 import de.zillolp.cookieclicker.profiles.PlayerProfile;
 import de.zillolp.cookieclicker.runnables.AlltimeUpdater;
 import de.zillolp.cookieclicker.runnables.AntiAutoClicker;
 import de.zillolp.cookieclicker.runnables.ResetTimerUpdater;
 import de.zillolp.cookieclicker.runnables.TimeUpdater;
-import de.zillolp.cookieclicker.utils.*;
+import de.zillolp.cookieclicker.utils.ConfigUtil;
+import de.zillolp.cookieclicker.utils.HologramUtil;
+import de.zillolp.cookieclicker.utils.ReflectionUtil;
+import de.zillolp.cookieclicker.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,41 +43,26 @@ public class CookieClicker extends JavaPlugin {
     @Override
     public void onEnable() {
         cookieClicker = this;
-        if (register()) {
-            init(Bukkit.getPluginManager());
-        }
+        register();
     }
 
     @Override
     public void onDisable() {
-        if (databaseConnector.checkConnection()) {
-            databaseConnector.disabled = true;
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                playerProfiles.get(player.getUniqueId()).uploadProfile();
-            }
-            try {
-                databaseConnector.getConnection().close();
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+        if (!(databaseConnector.checkConnection())) {
+            return;
         }
+        databaseConnector.disabled = true;
+        unloadPlayers();
+        databaseConnector.close();
     }
 
-    private boolean register() {
-        if (!(new ConfigUtil("config.yml").exist())) {
-            saveResource("config.yml", false);
-        }
-        if (!(new ConfigUtil("language.yml").exist())) {
-            saveResource("language.yml", false);
-        }
-        if (!(new ConfigUtil("locations.yml").exist())) {
-            saveResource("locations.yml", false);
-        }
-        if (!(new ConfigUtil("mysql.yml").exist())) {
-            saveResource("mysql.yml", false);
-        }
-        if (!(new ConfigUtil("permissions.yml").exist())) {
-            saveResource("permissions.yml", false);
+    private void register() {
+        String[] files = new String[]{"config.yml", "language.yml", "locations.yml", "mysql.yml", "permissions.yml"};
+        for (String file : files) {
+            if (new ConfigUtil(file).exists()) {
+                continue;
+            }
+            saveResource(file, false);
         }
         ConfigTools.load();
         LanguageTools.load();
@@ -85,25 +72,21 @@ public class CookieClicker extends JavaPlugin {
         databaseConnector = new DatabaseConnector(ConfigTools.isMysql(), "cookieclicker", MySQLTools.getHost(), MySQLTools.getPort(), MySQLTools.getDatabase(), MySQLTools.getUser(), MySQLTools.getPassword());
         databaseConnector.open();
 
-        if (databaseConnector.getConnection() == null) {
+        if (!(databaseConnector.checkConnection())) {
             Bukkit.getPluginManager().disablePlugin(cookieClicker);
-            return false;
+            return;
         }
         databaseManager = new DatabaseManager(databaseConnector);
-        return databaseConnector.checkConnection();
+        init(Bukkit.getPluginManager());
     }
 
     private void init(PluginManager pluginManager) {
-        new UpdateChecker().checkVersion();
         loadMetrics();
+        new UpdateChecker().checkVersion();
         ReflectionUtil.initialize();
-        ActionBarUtil.initialize();
         HologramUtil.initialize();
         statsWallLocations = new HashMap<>();
-        playerProfiles = new HashMap<>();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            playerProfiles.put(player.getUniqueId(), new PlayerProfile(player));
-        }
+        loadPlayers();
         getCommand("cookieclicker").setExecutor(new CookieClickerCommand());
         pluginManager.registerEvents(new AntiAFKListener(), this);
         pluginManager.registerEvents(new ClickerListener(), this);
@@ -125,6 +108,18 @@ public class CookieClicker extends JavaPlugin {
         timeUpdater = new TimeUpdater();
     }
 
+    private void loadPlayers() {
+        playerProfiles = new HashMap<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            playerProfiles.put(player.getUniqueId(), new PlayerProfile(player));
+        }
+    }
+
+    private void unloadPlayers() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            playerProfiles.get(player.getUniqueId()).uploadProfile();
+        }
+    }
 
     private void loadMetrics() {
         Metrics metrics = new Metrics(cookieClicker, 11733);

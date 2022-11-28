@@ -17,6 +17,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class HomeInventoryListener implements Listener {
     private final CookieClicker cookieClicker = CookieClicker.cookieClicker;
 
@@ -38,7 +40,7 @@ public class HomeInventoryListener implements Listener {
             return;
         }
         Material type = currentItem.getType();
-        String displayName = currentItem.getItemMeta().getDisplayName();
+        String displayName = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
         SoundManager soundManager = playerProfile.getSoundManager();
         InventoryProfile inventoryProfile = playerProfile.getInventoryProfile();
         if (type == XMaterial.PINK_TERRACOTTA.parseMaterial() && displayName.equalsIgnoreCase(LanguageTools.getLanguage("SHOP"))) {

@@ -25,12 +25,13 @@ public class PlayerProfile {
     private long lastClick;
     private Setups setups;
     private int setupNumber;
+    private int oldRank;
 
     public PlayerProfile(Player player) {
         playerManager = new PlayerManager(player);
+        values = playerManager.getValues();
         soundManager = new SoundManager(player);
         inventoryProfile = new InventoryProfile();
-        values = playerManager.getValues();
         uuid = player.getUniqueId();
         name = player.getName();
         isOverCPS = false;
@@ -39,6 +40,7 @@ public class PlayerProfile {
         lastClick = System.currentTimeMillis();
         setups = Setups.NONE;
         setupNumber = 0;
+        playerManager.loadProfile();
     }
 
     public PlayerManager getPlayerManager() {
@@ -55,6 +57,10 @@ public class PlayerProfile {
 
     public String getName() {
         return name;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public long getCookies() {
@@ -105,6 +111,10 @@ public class PlayerProfile {
         return setupNumber;
     }
 
+    public int getOldRank() {
+        return oldRank;
+    }
+
     public void setCookies(long cookies) {
         values.put("COOKIES", cookies);
     }
@@ -153,6 +163,10 @@ public class PlayerProfile {
         this.setupNumber = setupNumber;
     }
 
+    public void setOldRank(int oldRank) {
+        this.oldRank = oldRank;
+    }
+
     public void addCookies(long cookies) {
         setCookies(getCookies() + cookies);
     }
@@ -199,6 +213,5 @@ public class PlayerProfile {
         playerManager.uploadStats();
         playerManager.deleteHolograms();
         ResetTimerUpdater.deleteTimer(uuid);
-        cookieClicker.getPlayerProfiles().remove(uuid);
     }
 }

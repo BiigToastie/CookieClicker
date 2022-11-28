@@ -1,88 +1,91 @@
 package de.zillolp.cookieclicker.database;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import de.zillolp.cookieclicker.CookieClicker;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 public class DatabaseConnector {
     public boolean disabled;
-    private final boolean useMysql;
     private final String url;
-    private final String username;
-    private final String password;
-    private final String driver;
+    private final Properties properties;
     private Connection connection = null;
 
     public DatabaseConnector(boolean useMysql, String filename, String address, String port, String databaseName, String username, String password) {
         disabled = false;
-        this.useMysql = useMysql;
-        this.username = username;
-        this.password = password;
+        properties = new Properties();
+        properties.put("user", username);
+        properties.put("password", password);
+        properties.put("autoReconnect", true);
         if (useMysql) {
-            url = "jdbc:mysql://" + address + ":" + port + "/" + databaseName;
-            driver = ("com.mysql.jdbc.Driver");
-        } else {
-            File databaseFile = new File(CookieClicker.cookieClicker.getDataFolder(), filename + ".db");
-            if (!databaseFile.exists()) {
-                try {
-                    databaseFile.createNewFile();
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            }
-            url = "jdbc:sqlite:" + databaseFile.getAbsolutePath();
-            driver = ("org.sqlite.JDBC");
-        }
-    }
-
-    public Connection open() {
-        try {
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, username, password);
-            return connection;
-        } catch (SQLException exception) {
-            System.out.println("[CookieClicker] Could not connect to MySQL/SQLite server! Error: " + exception.getMessage());
-        } catch (ClassNotFoundException exception) {
-            System.out.println("[CookieClicker] JDBC Driver not found!");
-        }
-        return connection;
-    }
-
-    public void update(String qre) {
-        if (disabled) {
-            updateStatement(qre);
+            url = "jdbc:mysql://" + address + ":" + port + "/" + databaseName + "?autoReconnect=true";
             return;
         }
-        CompletableFuture.runAsync(() -> {
-            updateStatement(qre);
-        });
+        File databaseFile = new File(CookieClicker.cookieClicker.getDataFolder(), filename + ".db");
+        if (!databaseFile.exists()) {
+            try {
+                databaseFile.createNewFile();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+        url = "jdbc:sqlite:" + databaseFile.getAbsolutePath();
     }
 
-    private void updateStatement(String qre) {
-        if (connection != null) {
-            try {
-                Statement statement = connection.createStatement();
-                statement.executeUpdate(qre);
-                statement.close();
-            } catch (SQLException exception) {
-                System.err.print(exception);
-            }
+    public void open() {
+        try {
+            connection = DriverManager.getConnection(url, properties);
+        } catch (SQLException exception) {
+            System.out.println("[CookieClicker] Could not connect to MySQL server! Error: " + exception.getMessage());
         }
     }
 
-    public ResultSet query(String qre) {
-        if (connection != null) {
-            ResultSet resultSet = null;
-            try {
-                Statement statement = connection.createStatement();
-                resultSet = statement.executeQuery(qre);
-            } catch (SQLException exception) {
-                System.err.print(exception);
-            }
-            return resultSet;
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void update(PreparedStatement preparedStatement) {
+        if (disabled) {
+            updateStatement(preparedStatement);
+            return;
+        }
+        CompletableFuture.runAsync(() -> updateStatement(preparedStatement));
+    }
+
+    private void updateStatement(PreparedStatement preparedStatement) {
+        if (!(checkConnection())) {
+            return;
+        }
+        try {
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public PreparedStatement prepareStatement(String sql) {
+        if (!(checkConnection())) {
+            return null;
+        }
+        try {
+            return connection.prepareStatement(sql);
+        } catch (CommunicationsException exception) {
+            close();
+            open();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
         }
         return null;
     }

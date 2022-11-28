@@ -5,8 +5,8 @@ import de.zillolp.cookieclicker.config.ConfigTools;
 import de.zillolp.cookieclicker.config.LanguageTools;
 import de.zillolp.cookieclicker.config.LocationTools;
 import de.zillolp.cookieclicker.config.PermissionTools;
-import de.zillolp.cookieclicker.database.DatabaseManager;
 import de.zillolp.cookieclicker.enums.Setups;
+import de.zillolp.cookieclicker.manager.DatabaseManager;
 import de.zillolp.cookieclicker.profiles.PlayerProfile;
 import de.zillolp.cookieclicker.runnables.AlltimeUpdater;
 import de.zillolp.cookieclicker.runnables.ResetTimerUpdater;
@@ -22,6 +22,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +33,13 @@ public class CookieClickerCommand implements CommandExecutor {
     private final DatabaseManager databaseManager = cookieClicker.getDatabaseManager();
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-        if (!(commandSender instanceof Player)) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (!(commandSender instanceof Player player)) {
             Bukkit.getConsoleSender().sendMessage(LanguageTools.getONLY_PLAYER());
             return false;
         }
-        Player player = (Player) commandSender;
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 player.sendMessage("§6§lThe CookieClicker commands:");
                 player.sendMessage("§e/cookieclicker info.");
                 player.sendMessage("§7Shows you info about the plugin.");
@@ -62,8 +62,8 @@ public class CookieClickerCommand implements CommandExecutor {
                 player.sendMessage("§7Reloads the settings.");
                 player.sendMessage("§e/cookieclicker reset <player>.");
                 player.sendMessage("§7Resets the stats of a player.");
-                break;
-            case 1:
+            }
+            case 1 -> {
                 if (args[0].equalsIgnoreCase("info")) {
                     player.sendMessage("§6§lPlugin info:");
                     player.sendMessage("§7Plugin Name: §eCookieClicker");
@@ -104,12 +104,12 @@ public class CookieClickerCommand implements CommandExecutor {
                     new AlltimeUpdater().reload();
                     new ResetTimerUpdater().reload();
                     new TimeUpdater().reload();
-                    player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7The §bsettings §7have been reloaded.");
+                    player.sendMessage(LanguageTools.getPrefix() + "§7The §bsettings §7have been reloaded.");
                 } else {
                     player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
                 }
-                break;
-            case 2:
+            }
+            case 2 -> {
                 if (!(player.hasPermission(PermissionTools.getAdminPermission()) || args[0].equalsIgnoreCase("stats"))) {
                     player.sendMessage(LanguageTools.getNO_PERMISSION());
                     break;
@@ -119,17 +119,17 @@ public class CookieClickerCommand implements CommandExecutor {
                     String name = offlinePlayer.getName();
                     UUID uuid = offlinePlayer.getUniqueId();
                     if (!(databaseManager.playerExists(uuid, name))) {
-                        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§cThis player does not exist!");
+                        player.sendMessage(LanguageTools.getPrefix() + "§cThis player does not exist!");
                         return false;
                     }
                     if (args[0].equalsIgnoreCase("reset")) {
                         databaseManager.resetProfile(uuid, name);
-                        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7The player §6" + name + " §7was reset.");
+                        player.sendMessage(LanguageTools.getPrefix() + "§7The player §6" + name + " §7was reset.");
                     } else {
                         String cookies;
                         String perClick;
                         String clickerClicks;
-                        String place = String.valueOf(databaseManager.getRank(uuid, "PER_CLICK"));
+                        String place = String.valueOf(databaseManager.getRank(uuid));
                         PlayerProfile playerProfile = cookieClicker.getPlayerProfiles().get(uuid);
                         if (playerProfile == null) {
                             cookies = String.valueOf(databaseManager.getValue(uuid, "COOKIES"));
@@ -147,12 +147,12 @@ public class CookieClickerCommand implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("resettimer")) {
                     LocationTools locationTools = new LocationTools("ResetTimer", player.getLocation().getBlock().getLocation());
                     locationTools.saveLocation();
-                    player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7You have set the §bresettimer§7.");
+                    player.sendMessage(LanguageTools.getPrefix() + "§7You have set the §bresettimer§7.");
                 } else {
                     player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
                 }
-                break;
-            case 3:
+            }
+            case 3 -> {
                 if (!(player.hasPermission(PermissionTools.getAdminPermission()))) {
                     player.sendMessage(LanguageTools.getNO_PERMISSION());
                     break;
@@ -160,7 +160,7 @@ public class CookieClickerCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("delete")) {
                     if (args[1].equalsIgnoreCase("clicker")) {
                         if (!(StringUtil.isNumber(args[2]))) {
-                            player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§cPlease enter a correct number!");
+                            player.sendMessage(LanguageTools.getPrefix() + "§cPlease enter a correct number!");
                             break;
                         }
                         int number = Integer.parseInt(args[2]);
@@ -168,7 +168,7 @@ public class CookieClickerCommand implements CommandExecutor {
                         if (args[0].equalsIgnoreCase("delete")) {
                             LocationTools locationTools = new LocationTools("CookieClicker.Clicker-" + number);
                             if (!(locationTools.isLocation())) {
-                                player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§cThis CookieClicker does not exist!");
+                                player.sendMessage(LanguageTools.getPrefix() + "§cThis CookieClicker does not exist!");
                                 break;
                             }
                             locationTools.resetLocation();
@@ -177,12 +177,12 @@ public class CookieClickerCommand implements CommandExecutor {
                                 PlayerProfile playerProfile = playerProfiles.get(player1.getUniqueId());
                                 playerProfile.getPlayerManager().reloadHolograms();
                             }
-                            player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7You deleted the the §bCookieClicker-" + number + "§7.");
+                            player.sendMessage(LanguageTools.getPrefix() + "§7You deleted the the §bCookieClicker-" + number + "§7.");
                         } else {
                             PlayerProfile playerProfile = playerProfiles.get(player.getUniqueId());
                             playerProfile.setSetups(Setups.CLICKER);
                             playerProfile.setSetupNumber(number);
-                            player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Make right click on a §eblock§7.");
+                            player.sendMessage(LanguageTools.getPrefix() + "§7Make right click on a §eblock§7.");
                         }
                     } else {
                         player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
@@ -190,8 +190,8 @@ public class CookieClickerCommand implements CommandExecutor {
                 } else {
                     player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
                 }
-                break;
-            case 4:
+            }
+            case 4 -> {
                 if (!(player.hasPermission(PermissionTools.getAdminPermission()))) {
                     player.sendMessage(LanguageTools.getNO_PERMISSION());
                     break;
@@ -200,34 +200,32 @@ public class CookieClickerCommand implements CommandExecutor {
                     HashMap<UUID, PlayerProfile> playerProfiles = cookieClicker.getPlayerProfiles();
                     if (args[2].equalsIgnoreCase("time")) {
                         if (!(StringUtil.isNumber(args[3]))) {
-                            player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§cPlease enter a correct number!");
+                            player.sendMessage(LanguageTools.getPrefix() + "§cPlease enter a correct number!");
                             break;
                         }
                         int number = Integer.parseInt(args[3]);
                         PlayerProfile playerProfile = playerProfiles.get(player.getUniqueId());
                         playerProfile.setSetups(Setups.STATSWALL_TIME_HEAD);
                         playerProfile.setSetupNumber(number);
-                        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Make right click on a §ehead§7.");
+                        player.sendMessage(LanguageTools.getPrefix() + "§7Make right click on a §ehead§7.");
                     } else if (args[2].equalsIgnoreCase("alltime")) {
                         if (!(StringUtil.isNumber(args[3]))) {
-                            player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§cPlease enter a correct number!");
+                            player.sendMessage(LanguageTools.getPrefix() + "§cPlease enter a correct number!");
                             break;
                         }
                         int number = Integer.parseInt(args[3]);
                         PlayerProfile playerProfile = playerProfiles.get(player.getUniqueId());
                         playerProfile.setSetups(Setups.STATSWALL_ALLTIME_HEAD);
                         playerProfile.setSetupNumber(number);
-                        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Make right click on a §ehead§7.");
+                        player.sendMessage(LanguageTools.getPrefix() + "§7Make right click on a §ehead§7.");
                     } else {
-                        player.sendMessage(LanguageTools.getLanguage("PREFIX") + "§7Please use either §ealltime §7or §etime §7as type.");
+                        player.sendMessage(LanguageTools.getPrefix() + "§7Please use either §ealltime §7or §etime §7as type.");
                     }
                 } else {
                     player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
                 }
-                break;
-            default:
-                player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
-                break;
+            }
+            default -> player.sendMessage(LanguageTools.getUNKNOWN_COMMAND());
         }
         return false;
     }

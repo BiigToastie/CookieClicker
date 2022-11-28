@@ -2,7 +2,6 @@ package de.zillolp.cookieclicker.manager;
 
 import de.zillolp.cookieclicker.CookieClicker;
 import de.zillolp.cookieclicker.config.LanguageTools;
-import de.zillolp.cookieclicker.database.DatabaseManager;
 import de.zillolp.cookieclicker.utils.HologramUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerManager {
     private final CookieClicker cookieClicker = CookieClicker.cookieClicker;
@@ -28,7 +28,6 @@ public class PlayerManager {
         name = player.getName();
         values = new HashMap<>();
         holograms = new HashMap<>();
-        loadProfile();
     }
 
     public HashMap<String, Object> getValues() {
@@ -36,12 +35,12 @@ public class PlayerManager {
     }
 
     public void loadProfile() {
-        if (!(databaseManager.playerExists(uuid, name))) {
-            databaseManager.createPlayer(uuid, name);
-        }
-        Bukkit.getScheduler().runTaskLaterAsynchronously(cookieClicker, () -> {
-            databaseManager.loadProfile(uuid);
-        }, 4);
+        CompletableFuture.runAsync(() -> {
+            if (!(databaseManager.playerExists(uuid, name))) {
+                databaseManager.createPlayer(uuid, name);
+            }
+            Bukkit.getScheduler().runTaskLaterAsynchronously(cookieClicker, () -> databaseManager.loadPlayerData(uuid), 4);
+        });
     }
 
     public void spawnHolograms() {

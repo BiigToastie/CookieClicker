@@ -36,7 +36,7 @@ public class UpdateChecker {
         }
         currentVersion = cookieClicker.getDescription().getVersion();
         getVersion(version -> {
-            this.version = version;
+            UpdateChecker.version = version;
             isNewest = currentVersion.equals(version);
             if (!(isNewest)) {
                 System.out.println("[CookieClicker] You are using an outdated version!");

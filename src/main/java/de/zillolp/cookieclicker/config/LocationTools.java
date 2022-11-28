@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LocationTools {
     private final ConfigUtil configUtil = new ConfigUtil("locations.yml");
@@ -27,7 +28,7 @@ public class LocationTools {
     }
 
     public void saveLocation() {
-        configUtil.set(root + ".World", location.getWorld().getName());
+        configUtil.set(root + ".World", Objects.requireNonNull(location.getWorld()).getName());
         configUtil.set(root + ".X", location.getX());
         configUtil.set(root + ".Y", location.getY());
         configUtil.set(root + ".Z", location.getZ());
@@ -51,7 +52,7 @@ public class LocationTools {
 
     public ArrayList<Location> loadLocations() {
         ConfigurationSection configurationSection = configUtil.getConfigurationSection(root);
-        ArrayList<Location> locations = new ArrayList();
+        ArrayList<Location> locations = new ArrayList<>();
         for (String key : configurationSection.getKeys(false)) {
             String worldName = configUtil.getString(root + "." + key + ".World");
             if (worldName == null || (!(Bukkit.getWorlds().contains(Bukkit.getWorld(worldName))))) {

@@ -30,7 +30,7 @@ public class LanguageTools {
                 for (String line : configUtil.getConfigurationSection(blackWord).getKeys(false)) {
                     lines.add(StringUtil.replaceDefaults(configUtil.getString(blackWord + "." + line)));
                 }
-                linesMap.put(blackWord, lines.toArray(new String[lines.size()]));
+                linesMap.put(blackWord, lines.toArray(new String[0]));
             }
         }
     }
@@ -51,30 +51,30 @@ public class LanguageTools {
         return getLanguage(field).replace(target, String.valueOf(replace));
     }
 
+    public static String getPrefix() {
+        return getLanguage("PREFIX");
+    }
+
     public static String getNO_PERMISSION() {
-        return getLanguage("PREFIX") + getLanguage("NO_PERMISSION");
+        return getPrefix() + getLanguage("NO_PERMISSION");
     }
 
     public static String getUNKNOWN_COMMAND() {
-        return getLanguage("PREFIX") + getLanguage("UNKNOWN_COMMAND");
+        return getPrefix() + getLanguage("UNKNOWN_COMMAND");
     }
 
     public static String getONLY_PLAYER() {
-        return getLanguage("PREFIX") + getLanguage("ONLY_PLAYER");
+        return getPrefix() + getLanguage("ONLY_PLAYER");
     }
 
     public static String getRank(int index) {
         index++;
-        switch (index) {
-            case 1:
-                return getLines("Statswall.Rank Prefix")[0];
-            case 2:
-                return getLines("Statswall.Rank Prefix")[1];
-            case 3:
-                return getLines("Statswall.Rank Prefix")[2];
-            default:
-                return getLines("Statswall.Rank Prefix")[3].replace("%number%", String.valueOf(index));
-        }
+        return switch (index) {
+            case 1 -> getLines("Statswall.Rank Prefix")[0];
+            case 2 -> getLines("Statswall.Rank Prefix")[1];
+            case 3 -> getLines("Statswall.Rank Prefix")[2];
+            default -> getLines("Statswall.Rank Prefix")[3].replace("%number%", String.valueOf(index));
+        };
     }
 
     public static String[] getSTATSWALL_LINES(String name, String place, String perClick) {
@@ -85,7 +85,7 @@ public class LanguageTools {
             line = line.replace("%perClick%", perClick);
             lines.add(line);
         }
-        return lines.toArray(new String[lines.size()]);
+        return lines.toArray(new String[0]);
     }
 
     public static String[] getSTATS_LINES(String field, String name, String place, String cookies, String perClick, String clickerClicks) {
@@ -98,6 +98,6 @@ public class LanguageTools {
             line = line.replace("%clickerClicks%", clickerClicks);
             lines.add(line);
         }
-        return lines.toArray(new String[lines.size()]);
+        return lines.toArray(new String[0]);
     }
 }

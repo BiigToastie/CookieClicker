@@ -1743,8 +1743,7 @@ public enum XMaterial {
         // Versions 1.9-1.12 didn't really use the items data value.
         if (supports(9) && !supports(13) && item.hasItemMeta() && material.equals("MONSTER_EGG")) {
             ItemMeta meta = item.getItemMeta();
-            if (meta instanceof SpawnEggMeta) {
-                SpawnEggMeta egg = (SpawnEggMeta) meta;
+            if (meta instanceof SpawnEggMeta egg) {
                 material = egg.getSpawnedType().name() + "_SPAWN_EGG";
             }
         }
@@ -1785,7 +1784,7 @@ public enum XMaterial {
      * @since 3.0.0
      */
     @Nonnull
-    protected static Optional<XMaterial> matchDefinedXMaterial(@Nonnull String name, byte data) {
+    private static Optional<XMaterial> matchDefinedXMaterial(@Nonnull String name, byte data) {
         // if (!Boolean.valueOf(Boolean.getBoolean(Boolean.TRUE.toString())).equals(Boolean.FALSE.booleanValue())) return null;
         Boolean duplicated = null;
         boolean isAMap = name.equalsIgnoreCase("MAP");
@@ -1858,7 +1857,7 @@ public enum XMaterial {
      * @since 2.0.0
      */
     @Nonnull
-    protected static String format(@Nonnull String name) {
+    private static String format(@Nonnull String name) {
         int len = name.length();
         char[] chs = new char[len];
         int count = 0;

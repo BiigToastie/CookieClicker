@@ -27,7 +27,7 @@ public class AntiAFKListener implements Listener {
         }
         Location locationFrom = event.getFrom();
         Location locationTo = event.getTo();
-        if (locationFrom.getBlockX() == locationTo.getBlockX() && locationFrom.getBlockZ() == locationTo.getBlockZ()) {
+        if (locationTo == null || (locationFrom.getBlockX() == locationTo.getBlockX() && locationFrom.getBlockZ() == locationTo.getBlockZ())) {
             return;
         }
         playerProfile.setLastMove(System.currentTimeMillis());

@@ -1429,7 +1429,6 @@ public enum XSound {
      * the normal RegEx + String Methods approach for both formatted and unformatted material names.
      *
      * @param name the sound name to format.
-     *
      * @return an enum name.
      * @since 1.0.0
      */
@@ -1443,7 +1442,8 @@ public enum XSound {
         for (int i = 0; i < len; i++) {
             char ch = name.charAt(i);
 
-            if (!appendUnderline && count != 0 && (ch == '-' || ch == ' ' || ch == '_') && chs[count] != '_') appendUnderline = true;
+            if (!appendUnderline && count != 0 && (ch == '-' || ch == ' ' || ch == '_') && chs[count] != '_')
+                appendUnderline = true;
             else {
                 boolean number = false;
                 // A few sounds have numbers in them.
@@ -1466,13 +1466,13 @@ public enum XSound {
      * Parses the XSound with the given name.
      *
      * @param sound the name of the sound.
-     *
      * @return a matched XSound.
      * @since 1.0.0
      */
     @Nonnull
     public static Optional<XSound> matchXSound(@Nonnull String sound) {
-        if (sound == null || sound.isEmpty()) throw new IllegalArgumentException("Cannot match XSound of a null or empty sound name");
+        if (sound == null || sound.isEmpty())
+            throw new IllegalArgumentException("Cannot match XSound of a null or empty sound name");
         return Optional.ofNullable(Data.NAMES.get(format(sound)));
     }
 
@@ -1480,7 +1480,6 @@ public enum XSound {
      * Parses the XSound with the given bukkit sound.
      *
      * @param sound the Bukkit sound.
-     *
      * @return a matched sound.
      * @throws IllegalArgumentException may be thrown as an unexpected exception.
      * @since 2.0.0
@@ -1496,7 +1495,6 @@ public enum XSound {
      *
      * @param player the player to play the sound to.
      * @param sound  the sound to play to the player.
-     *
      * @see #play(Location, String)
      * @since 1.0.0
      */
@@ -1592,7 +1590,6 @@ public enum XSound {
      * <p>
      *
      * @param sound the string of the sound with volume and pitch (if needed).
-     *
      * @since 7.0.0
      */
     @Nullable
@@ -1637,7 +1634,6 @@ public enum XSound {
      * affected by this.
      *
      * @param player the player to stop all the sounds from.
-     *
      * @see #stopSound(Player)
      * @since 2.0.0
      */
@@ -1670,7 +1666,6 @@ public enum XSound {
      * @param instrument  the instrument.
      * @param ascendLevel the ascend level of notes. Can only be positive and not higher than 7
      * @param delay       the delay between each play.
-     *
      * @return the async task handling the operation.
      * @since 2.0.0
      */
@@ -1743,7 +1738,6 @@ public enum XSound {
      * @param pitch  the pitch of the sound.
      * @param repeat the amount of times to repeat playing.
      * @param delay  the delay between each repeat.
-     *
      * @return the async task handling this operation.
      * @see #play(Location, float, float)
      * @since 2.0.0
@@ -1771,7 +1765,6 @@ public enum XSound {
      * Stops playing the specified sound from the player.
      *
      * @param player the player to stop playing the sound to.
-     *
      * @see #stopMusic(Player)
      * @since 2.0.0
      */
@@ -1785,7 +1778,6 @@ public enum XSound {
      * Plays a normal sound to an entity.
      *
      * @param entity the entity to play the sound to.
-     *
      * @since 1.0.0
      */
     public void play(@Nonnull Entity entity) {
@@ -1798,7 +1790,6 @@ public enum XSound {
      * @param entity the entity to play the sound to.
      * @param volume the volume of the sound, 1 is normal.
      * @param pitch  the pitch of the sound, 0 is normal.
-     *
      * @since 1.0.0
      */
     public void play(@Nonnull Entity entity, float volume, float pitch) {
@@ -1815,7 +1806,6 @@ public enum XSound {
      * Plays a normal sound in a location.
      *
      * @param location the location to play the sound in.
-     *
      * @since 2.0.0
      */
     public void play(@Nonnull Location location) {
@@ -1828,7 +1818,6 @@ public enum XSound {
      * @param location the location to play this sound.
      * @param volume   the volume of the sound, 1 is normal.
      * @param pitch    the pitch of the sound, 0 is normal.
-     *
      * @since 2.0.0
      */
     public void play(@Nonnull Location location, float volume, float pitch) {
@@ -1867,11 +1856,14 @@ public enum XSound {
      * @since 3.0.0
      */
     public static class Record {
-        @Nonnull public final XSound sound;
+        @Nonnull
+        public final XSound sound;
         public final float volume, pitch;
         public boolean playAtLocation;
-        @Nullable public Player player;
-        @Nullable public Location location;
+        @Nullable
+        public Player player;
+        @Nullable
+        public Location location;
 
         public Record(@Nonnull XSound sound) {
             this(sound, DEFAULT_VOLUME, DEFAULT_PITCH);
@@ -1923,7 +1915,8 @@ public enum XSound {
          * @since 3.0.0
          */
         public void play() {
-            if (player == null && location == null) throw new IllegalStateException("Cannot play sound when there is no location available");
+            if (player == null && location == null)
+                throw new IllegalStateException("Cannot play sound when there is no location available");
             play(player == null ? location : player.getLocation());
         }
 
@@ -1931,12 +1924,12 @@ public enum XSound {
          * Plays the sound with the updated location.
          *
          * @param updatedLocation the updated location.
-         *
          * @since 3.0.0
          */
         public void play(@Nonnull Location updatedLocation) {
             Objects.requireNonNull(updatedLocation, "Cannot play sound at null location");
-            if (playAtLocation || player == null) location.getWorld().playSound(updatedLocation, sound.parseSound(), volume, pitch);
+            if (playAtLocation || player == null)
+                location.getWorld().playSound(updatedLocation, sound.parseSound(), volume, pitch);
             else player.playSound(updatedLocation, sound.parseSound(), volume, pitch);
         }
 

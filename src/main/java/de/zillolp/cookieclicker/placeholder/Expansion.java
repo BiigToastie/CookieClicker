@@ -5,6 +5,7 @@ import de.zillolp.cookieclicker.profiles.PlayerProfile;
 import de.zillolp.cookieclicker.utils.StringUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -17,22 +18,22 @@ public class Expansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return "ZilloLP";
     }
 
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "cookieclicker";
     }
 
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return "1.0";
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String identifier) {
+    public String onRequest(OfflinePlayer player, @NotNull String identifier) {
         UUID uuid = player.getUniqueId();
         PlayerProfile playerProfile = cookieClicker.getPlayerProfiles().get(uuid);
 
@@ -43,21 +44,20 @@ public class Expansion extends PlaceholderExpansion {
         Long perClick = playerProfile.getPerClick();
         Long clickerClicks = playerProfile.getClickerClicks();
 
-        switch (identifier.toUpperCase()) {
-            case "COOKIES":
+        return switch (identifier.toUpperCase()) {
+            case "COOKIES" ->
                 // %cookieclicker_cookies%
-                return StringUtil.formatNumber(cookies);
-            case "PERCLICK":
+                    StringUtil.formatNumber(cookies);
+            case "PERCLICK" ->
                 // %cookieclicker_perClick%
-                return StringUtil.formatNumber(perClick);
-            case "CLICKERCLICKS":
+                    StringUtil.formatNumber(perClick);
+            case "CLICKERCLICKS" ->
                 // %cookieclicker_clickerClicks%
-                return StringUtil.formatNumber(clickerClicks);
-            case "PLACE":
+                    StringUtil.formatNumber(clickerClicks);
+            case "PLACE" ->
                 // %cookieclicker_place%
-                return String.valueOf(cookieClicker.getDatabaseManager().getRank(uuid, "PER_CLICK"));
-            default:
-                return "N/A";
-        }
+                    String.valueOf(cookieClicker.getDatabaseManager().getRank(uuid));
+            default -> "N/A";
+        };
     }
 }

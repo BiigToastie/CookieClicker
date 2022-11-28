@@ -157,7 +157,8 @@ public class HologramUtil extends ReflectionUtil {
 
             holograms.add(entityArmorStand);
             craftHolograms.add(armorStand);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                 InstantiationException exception) {
             exception.printStackTrace();
             System.out.println("[CookieClicker] Error on creating the hologram");
         }
@@ -179,7 +180,8 @@ public class HologramUtil extends ReflectionUtil {
                 }
                 sendMetaDataChange(entityArmorStand, armorStand);
             }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                 InstantiationException exception) {
             exception.printStackTrace();
             System.out.println("[CookieClicker] Error on creating the hologram");
         }
@@ -198,7 +200,8 @@ public class HologramUtil extends ReflectionUtil {
             }
             Object changeConstructor = changeArmorStandClass.getConstructor(int.class, dataWatcherClass, boolean.class).newInstance(id, ai, false);
             sendPacket(changeConstructor, player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                 InstantiationException exception) {
             exception.printStackTrace();
             System.out.println("[CookieClicker] Error on removing the hologram");
         }
@@ -219,7 +222,8 @@ public class HologramUtil extends ReflectionUtil {
             }
             Object deleteConstructor = deleteArmorStandClass.getConstructor(int[].class).newInstance(ids);
             sendPacket(deleteConstructor, player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                 InstantiationException exception) {
             exception.printStackTrace();
             System.out.println("[CookieClicker] Error on removing the hologram");
         }
