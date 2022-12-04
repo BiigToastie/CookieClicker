@@ -57,5 +57,4 @@ public class ReflectionUtil {
             System.out.println("[CookieClicker] Error on sending the package");
         }
     }
-
 }

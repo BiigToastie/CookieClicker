@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 public class DatabaseConnector {
     public boolean disabled;
     private final String url;
+    private final String driver;
     private final Properties properties;
     private Connection connection = null;
 
@@ -25,10 +26,12 @@ public class DatabaseConnector {
         properties.put("password", password);
         properties.put("autoReconnect", true);
         if (useMysql) {
+            driver = ("com.mysql.jdbc.Driver");
             url = "jdbc:mysql://" + address + ":" + port + "/" + databaseName + "?autoReconnect=true";
             return;
         }
-        File databaseFile = new File(CookieClicker.cookieClicker.getDataFolder(), filename + ".db");
+        CookieClicker cookieClicker = CookieClicker.cookieClicker;
+        File databaseFile = new File(cookieClicker.getDataFolder(), filename + ".db");
         if (!databaseFile.exists()) {
             try {
                 databaseFile.createNewFile();
@@ -36,13 +39,18 @@ public class DatabaseConnector {
                 exception.printStackTrace();
             }
         }
+        driver = ("org.sqlite.JDBC");
         url = "jdbc:sqlite:" + databaseFile.getAbsolutePath();
     }
 
     public void open() {
         try {
+            Class.forName(driver);
             connection = DriverManager.getConnection(url, properties);
         } catch (SQLException exception) {
+            System.out.println("[CookieClicker] Could not connect to MySQL server! Error: " + exception.getMessage());
+        } catch (ClassNotFoundException exception) {
+            System.out.println("[CookieClicker] JDBC Driver not found!");
             System.out.println("[CookieClicker] Could not connect to MySQL server! Error: " + exception.getMessage());
         }
     }

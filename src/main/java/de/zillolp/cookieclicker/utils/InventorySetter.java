@@ -87,5 +87,4 @@ public class InventorySetter {
         }
         inventory.setItem(27, new ItemBuilder(XMaterial.PLAYER_HEAD, LanguageTools.getLanguage("BACK"), "bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9").build());
     }
-
 }

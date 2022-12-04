@@ -40,5 +40,4 @@ public class ShopBuyListener implements Listener {
         }
         data.put(playerProfile.getName(), playerProfile.getPerClick());
     }
-
 }

@@ -4,6 +4,7 @@ import de.zillolp.cookieclicker.bstats.Metrics;
 import de.zillolp.cookieclicker.commands.CookieClickerCommand;
 import de.zillolp.cookieclicker.config.*;
 import de.zillolp.cookieclicker.database.DatabaseConnector;
+import de.zillolp.cookieclicker.enums.Designs;
 import de.zillolp.cookieclicker.listener.*;
 import de.zillolp.cookieclicker.manager.DatabaseManager;
 import de.zillolp.cookieclicker.placeholder.Expansion;
@@ -85,6 +86,9 @@ public class CookieClicker extends JavaPlugin {
         new UpdateChecker().checkVersion();
         ReflectionUtil.initialize();
         HologramUtil.initialize();
+        for (Designs design : Designs.values()) {
+            design.load();
+        }
         statsWallLocations = new HashMap<>();
         loadPlayers();
         getCommand("cookieclicker").setExecutor(new CookieClickerCommand());

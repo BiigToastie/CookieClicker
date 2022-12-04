@@ -19,8 +19,8 @@ public class DatabaseManager {
 
     public DatabaseManager(DatabaseConnector databaseConnector) {
         this.databaseConnector = databaseConnector;
-        databaseConnector.update(databaseConnector.prepareStatement("CREATE TABLE IF NOT EXISTS cookieclicker_players(UUID varchar(64), NAME varchar(64), COOKIES bigint, PER_CLICK bigint, DESIGN varchar(16), CLICKER_CLICKS bigint, " +
-                "PRICE bigint, PRICE1 bigint, PRICE2 bigint, PRICE3 bigint, PRICE4 bigint, PRICE5 bigint, PRICE6 bigint, PRICE7 bigint, PRICE8 bigint, PRICE9 bigint, PRICE10 bigint, PRICE11 bigint, PRICE12 bigint, PRICE13 bigint);"));
+        databaseConnector.update(databaseConnector.prepareStatement("CREATE TABLE IF NOT EXISTS cookieclicker_players(UUID VARCHAR(64), NAME VARCHAR(64), COOKIES BIGINT, PER_CLICK BIGINT, DESIGN VARCHAR(16), CLICKER_CLICKS BIGINT, " +
+                "PRICE BIGINT, PRICE1 BIGINT, PRICE2 BIGINT, PRICE3 BIGINT, PRICE4 BIGINT, PRICE5 BIGINT, PRICE6 BIGINT, PRICE7 BIGINT, PRICE8 BIGINT, PRICE9 BIGINT, PRICE10 BIGINT, PRICE11 BIGINT, PRICE12 BIGINT, PRICE13 BIGINT);"));
     }
 
     public void createPlayer(UUID uuid, String name) {
@@ -73,17 +73,17 @@ public class DatabaseManager {
 
     public void loadPlayerData(UUID uuid) {
         PlayerProfile playerProfile = cookieClicker.getPlayerProfiles().get(uuid);
-        playerProfile.setCookies((Long) getValue(uuid, "COOKIES"));
-        playerProfile.setPerClick((Long) getValue(uuid, "PER_CLICK"));
-        playerProfile.setClickerClicks((Long) getValue(uuid, "CLICKER_CLICKS"));
-        playerProfile.setDesigns(Designs.valueOf((String) getValue(uuid, "DESIGN")));
+        playerProfile.setCookies(Long.parseLong(getValue(uuid, "COOKIES")));
+        playerProfile.setPerClick(Long.parseLong(getValue(uuid, "PER_CLICK")));
+        playerProfile.setClickerClicks(Long.parseLong(getValue(uuid, "CLICKER_CLICKS")));
+        playerProfile.setDesigns(Designs.valueOf(getValue(uuid, "DESIGN")));
         playerProfile.setOldRank(getRank(uuid, "PER_CLICK"));
 
         for (int number = 0; number < 14; number++) {
             if (number == 0) {
-                playerProfile.setPrice(number, (Long) getValue(uuid, "PRICE"));
+                playerProfile.setPrice(number, Long.parseLong(getValue(uuid, "PRICE")));
             } else {
-                playerProfile.setPrice(number, (Long) getValue(uuid, "PRICE" + number));
+                playerProfile.setPrice(number, Long.parseLong(getValue(uuid, "PRICE" + number)));
             }
         }
     }
@@ -114,13 +114,13 @@ public class DatabaseManager {
         }
     }
 
-    public Object getValue(UUID uuid, String field) {
+    public String getValue(UUID uuid, String field) {
         try {
             PreparedStatement statement = databaseConnector.prepareStatement("SELECT " + field + " FROM cookieclicker_players WHERE UUID= ?");
             statement.setString(1, uuid.toString());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getObject(field);
+                return String.valueOf(resultSet.getObject(field));
             }
             resultSet.close();
         } catch (SQLException exception) {
@@ -151,7 +151,7 @@ public class DatabaseManager {
         int databaseRank;
         PlayerProfile playerProfile = cookieClicker.getPlayerProfiles().get(uuid);
         if (playerProfile == null) {
-            perClick = (long) getValue(uuid, "PER_CLICK");
+            perClick = Long.parseLong(getValue(uuid, "PER_CLICK"));
         } else {
             perClick = playerProfile.getPerClick();
             setValue(uuid, "PER_CLICK", perClick);
