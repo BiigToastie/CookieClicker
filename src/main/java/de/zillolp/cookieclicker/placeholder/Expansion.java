@@ -44,7 +44,8 @@ public class Expansion extends PlaceholderExpansion {
         Long perClick = playerProfile.getPerClick();
         Long clickerClicks = playerProfile.getClickerClicks();
 
-        return switch (identifier.toUpperCase()) {
+        String[] s = identifier.split("_");
+        return switch (s[0].toUpperCase()) {
             case "COOKIES" ->
                 // %cookieclicker_cookies%
                     StringUtil.formatNumber(cookies);
